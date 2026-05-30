@@ -1,4 +1,4 @@
-admdR<%@page contentType="text/html" pageEncoding="UTF-8"%>
+<%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@ page import="java.util.*, model.*, model.User" %>
 <%
 User _admin = (User) session.getAttribute("loggedUser");
@@ -16,8 +16,7 @@ List<Reservation> recent = reservations.size() > 8 ? reservations.subList(0, 8) 
 <html lang="fr">
 <head>
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Blue Wave Admin — Tableau de bord</title>
-<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet">
+<title>BlueWave | Tableau de bord Admin</title><link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 <style><%@ include file="adminStyle.css" %></style>
 </head>
