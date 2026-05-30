@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns="https://jakarta.ee/xml/ns/jakartaee"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="https://jakarta.ee/xml/ns/jakartaee/web-app_6_0.xsd"
+         version="6.0">
+
+    <welcome-file-list><welcome-file>index.jsp</welcome-file></welcome-file-list>
+
+    <!-- AUTH -->
+    <servlet><servlet-name>LoginServlet</servlet-name><servlet-class>servlet.LoginServlet</servlet-class></servlet>
+    <servlet-mapping><servlet-name>LoginServlet</servlet-name><url-pattern>/login</url-pattern></servlet-mapping>
+
+    <servlet><servlet-name>RegisterServlet</servlet-name><servlet-class>servlet.RegisterServlet</servlet-class></servlet>
+    <servlet-mapping><servlet-name>RegisterServlet</servlet-name><url-pattern>/register</url-pattern></servlet-mapping>
+
+    <servlet><servlet-name>LogoutServlet</servlet-name><servlet-class>servlet.LogoutServlet</servlet-class></servlet>
+    <servlet-mapping><servlet-name>LogoutServlet</servlet-name><url-pattern>/logout</url-pattern></servlet-mapping>
+
+    <!-- CLIENT -->
+    <servlet><servlet-name>ClientDashboardServlet</servlet-name><servlet-class>servlet.ClientDashboardServlet</servlet-class></servlet>
+    <servlet-mapping><servlet-name>ClientDashboardServlet</servlet-name><url-pattern>/client/dashboard</url-pattern></servlet-mapping>
+
+    <servlet><servlet-name>ClientReservationServlet</servlet-name><servlet-class>servlet.ClientReservationServlet</servlet-class></servlet>
+    <servlet-mapping><servlet-name>ClientReservationServlet</servlet-name><url-pattern>/my-reservations</url-pattern></servlet-mapping>
+
+    <!-- ADMIN -->
+    <servlet><servlet-name>AdminReservationServlet</servlet-name><servlet-class>servlet.AdminReservationServlet</servlet-class></servlet>
+    <servlet-mapping><servlet-name>AdminReservationServlet</servlet-name><url-pattern>/admin/reservations</url-pattern></servlet-mapping>
+
+    <servlet><servlet-name>AdminRoomServlet</servlet-name><servlet-class>servlet.AdminRoomServlet</servlet-class></servlet>
+    <servlet-mapping><servlet-name>AdminRoomServlet</servlet-name><url-pattern>/admin/rooms</url-pattern></servlet-mapping>
+
+    <servlet><servlet-name>RoomTypeServlet</servlet-name><servlet-class>servlet.RoomTypeServlet</servlet-class></servlet>
+    <servlet-mapping><servlet-name>RoomTypeServlet</servlet-name><url-pattern>/admin/room-types</url-pattern></servlet-mapping>
+
+    <servlet><servlet-name>ServiceServlet</servlet-name><servlet-class>servlet.ServiceServlet</servlet-class></servlet>
+    <servlet-mapping><servlet-name>ServiceServlet</servlet-name><url-pattern>/admin/services</url-pattern></servlet-mapping>
+
+    <servlet><servlet-name>AdminClientServlet</servlet-name><servlet-class>servlet.AdminClientServlet</servlet-class></servlet>
+    <servlet-mapping><servlet-name>AdminClientServlet</servlet-name><url-pattern>/admin/clients</url-pattern></servlet-mapping>
+
+    <!-- BOOKING -->
+    <servlet><servlet-name>PaymentServlet</servlet-name><servlet-class>servlet.PaymentServlet</servlet-class></servlet>
+    <servlet-mapping><servlet-name>PaymentServlet</servlet-name><url-pattern>/pay</url-pattern></servlet-mapping>
+
+    <servlet><servlet-name>CheckAvailabilityServlet</servlet-name><servlet-class>servlet.CheckAvailabilityServlet</servlet-class></servlet>
+    <servlet-mapping><servlet-name>CheckAvailabilityServlet</servlet-name><url-pattern>/check-availability</url-pattern></servlet-mapping>
+
+    <servlet><servlet-name>ReservationServlet</servlet-name><servlet-class>servlet.ReservationServlet</servlet-class></servlet>
+    <servlet-mapping><servlet-name>ReservationServlet</servlet-name><url-pattern>/reserve</url-pattern></servlet-mapping>
+
+    <servlet><servlet-name>RoomServlet</servlet-name><servlet-class>servlet.RoomServlet</servlet-class></servlet>
+    <servlet-mapping><servlet-name>RoomServlet</servlet-name><url-pattern>/rooms</url-pattern></servlet-mapping>
+
+</web-app>

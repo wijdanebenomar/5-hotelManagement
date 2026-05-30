@@ -1,0 +1,1067 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Blue Wave — Dashboard Admin</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<style>
+:root {
+  --black:      #0a0a0a;
+  --black-mid:  #111111;
+  --black-soft: #1a1a1a;
+  --black-card: #161616;
+  --black-card2:#131313;
+  --gold:       #c9a45c;
+  --gold-light: #e8d5a3;
+  --gold-dim:   rgba(201,164,92,0.12);
+  --gold-dim2:  rgba(201,164,92,0.06);
+  --white:      #ffffff;
+  --white-85:   rgba(255,255,255,0.85);
+  --white-60:   rgba(255,255,255,0.6);
+  --white-40:   rgba(255,255,255,0.4);
+  --white-15:   rgba(255,255,255,0.08);
+  --border:     rgba(201,164,92,0.2);
+  --border-soft:rgba(201,164,92,0.1);
+  --success:    #4ade80;
+  --warning:    #fbbf24;
+  --danger:     #f87171;
+  --info:       #60a5fa;
+  --sidebar-w: 260px;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+html { scroll-behavior:smooth; }
+body { font-family:'DM Sans',sans-serif; background:var(--black); color:var(--white); display:flex; min-height:100vh; overflow-x:hidden; }
+
+/* ── SIDEBAR ── */
+.sidebar { width:var(--sidebar-w); min-height:100vh; background:var(--black-card); border-right:1px solid var(--border-soft); display:flex; flex-direction:column; position:fixed; top:0; left:0; z-index:100; transition:transform 0.3s; }
+.sidebar-logo { padding:28px 28px 20px; border-bottom:1px solid var(--border-soft); }
+.sidebar-logo h1 { font-family:'Cormorant Garamond',serif; font-size:22px; font-weight:600; color:var(--gold); letter-spacing:2px; }
+.sidebar-logo span { font-size:10px; letter-spacing:3px; text-transform:uppercase; color:var(--white-40); display:block; margin-top:3px; }
+.sidebar-nav { flex:1; padding:16px 0; }
+.nav-section-label { font-size:9px; letter-spacing:3px; text-transform:uppercase; color:var(--white-40); padding:14px 28px 6px; display:block; }
+.nav-item { display:flex; align-items:center; gap:12px; padding:11px 28px; cursor:pointer; color:var(--white-60); font-size:13px; letter-spacing:0.5px; transition:color 0.2s, background 0.2s; border-left:2px solid transparent; text-decoration:none; }
+.nav-item i { font-size:15px; width:18px; text-align:center; }
+.nav-item:hover { color:var(--white-85); background:var(--white-15); }
+.nav-item.active { color:var(--gold); background:var(--gold-dim2); border-left-color:var(--gold); }
+.sidebar-footer { padding:20px 28px; border-top:1px solid var(--border-soft); }
+.admin-avatar { display:flex; align-items:center; gap:12px; }
+.avatar-circle { width:36px; height:36px; border-radius:50%; background:var(--gold-dim); border:1px solid var(--border); display:flex; align-items:center; justify-content:center; font-family:'Cormorant Garamond',serif; font-size:14px; color:var(--gold); }
+.avatar-info { flex:1; }
+.avatar-name { font-size:13px; font-weight:500; color:var(--white-85); }
+.avatar-role { font-size:10px; letter-spacing:1px; color:var(--white-40); text-transform:uppercase; }
+
+/* ── LOADER ── */
+.api-loader { display:inline-flex; align-items:center; gap:6px; color:var(--white-40); font-size:11px; }
+.spinner { width:14px; height:14px; border:2px solid var(--border); border-top-color:var(--gold); border-radius:50%; animation:spin 0.7s linear infinite; }
+@keyframes spin { to { transform:rotate(360deg); } }
+.api-error { color:var(--danger); font-size:12px; padding:12px; background:rgba(248,113,113,0.08); border:1px solid rgba(248,113,113,0.2); border-radius:8px; margin-bottom:16px; }
+
+/* ── MAIN ── */
+.main { margin-left:var(--sidebar-w); flex:1; display:flex; flex-direction:column; }
+.topbar { height:70px; padding:0 36px; display:flex; align-items:center; justify-content:space-between; border-bottom:1px solid var(--border-soft); background:rgba(10,10,10,0.8); backdrop-filter:blur(12px); position:sticky; top:0; z-index:50; }
+.topbar-left h2 { font-size:16px; font-weight:500; color:var(--white-85); letter-spacing:0.3px; }
+.topbar-left p { font-size:11px; color:var(--white-40); margin-top:1px; letter-spacing:0.5px; }
+.topbar-right { display:flex; align-items:center; gap:16px; }
+.topbar-btn { width:36px; height:36px; border-radius:8px; background:var(--white-15); border:1px solid var(--border-soft); display:flex; align-items:center; justify-content:center; cursor:pointer; color:var(--white-60); transition:all 0.2s; position:relative; }
+.topbar-btn:hover { color:var(--gold); border-color:var(--border); }
+.notif-badge { position:absolute; top:-4px; right:-4px; width:14px; height:14px; border-radius:50%; background:var(--danger); font-size:8px; display:flex; align-items:center; justify-content:center; color:#fff; font-weight:600; }
+.date-badge { font-size:11px; color:var(--white-60); letter-spacing:1px; padding:7px 14px; border:1px solid var(--border-soft); border-radius:8px; background:var(--white-15); }
+
+/* ── CONTENT ── */
+.content { padding:32px 36px; flex:1; }
+.page-section { display:none; }
+.page-section.active { display:block; }
+
+/* ── KPI CARDS ── */
+.kpi-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:16px; margin-bottom:28px; }
+.kpi-card { background:var(--black-card); border:1px solid var(--border-soft); border-radius:14px; padding:20px 22px; position:relative; overflow:hidden; transition:border-color 0.2s, transform 0.2s; }
+.kpi-card:hover { border-color:var(--border); transform:translateY(-2px); }
+.kpi-card::before { content:''; position:absolute; top:0; left:0; right:0; height:2px; background:linear-gradient(90deg, var(--gold), transparent); opacity:0.5; }
+.kpi-label { font-size:10px; letter-spacing:3px; text-transform:uppercase; color:var(--white-40); margin-bottom:10px; }
+.kpi-value { font-family:'Cormorant Garamond',serif; font-size:36px; font-weight:400; color:var(--white-85); line-height:1; }
+.kpi-value span { font-size:16px; color:var(--gold); margin-right:3px; }
+.kpi-delta { display:flex; align-items:center; gap:5px; margin-top:8px; font-size:11px; }
+.delta-up { color:var(--success); }
+.delta-down { color:var(--danger); }
+.kpi-icon { position:absolute; right:18px; top:18px; width:38px; height:38px; border-radius:10px; background:var(--gold-dim); display:flex; align-items:center; justify-content:center; color:var(--gold); font-size:16px; }
+
+/* ── CHARTS ── */
+.charts-row { display:grid; grid-template-columns:2fr 1fr; gap:16px; margin-bottom:28px; }
+.chart-card { background:var(--black-card); border:1px solid var(--border-soft); border-radius:14px; padding:22px 24px; }
+.chart-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:18px; }
+.chart-title { font-size:13px; font-weight:500; color:var(--white-85); letter-spacing:0.3px; }
+.chart-subtitle { font-size:11px; color:var(--white-40); margin-top:2px; }
+.chart-badge { font-size:10px; letter-spacing:2px; text-transform:uppercase; color:var(--gold); background:var(--gold-dim); padding:5px 12px; border-radius:6px; }
+.chart-wrap { position:relative; height:220px; }
+
+/* ── TABLE ── */
+.table-card { background:var(--black-card); border:1px solid var(--border-soft); border-radius:14px; overflow:hidden; margin-bottom:28px; }
+.table-header { padding:18px 24px 16px; border-bottom:1px solid var(--border-soft); display:flex; align-items:center; justify-content:space-between; }
+.table-title { font-size:13px; font-weight:500; color:var(--white-85); }
+.table-actions { display:flex; gap:10px; }
+.tbl-btn { padding:8px 18px; border-radius:7px; border:1px solid var(--border); background:transparent; color:var(--white-60); font-family:'DM Sans',sans-serif; font-size:11px; letter-spacing:1.5px; text-transform:uppercase; cursor:pointer; transition:all 0.2s; }
+.tbl-btn:hover { color:var(--gold); border-color:var(--gold); }
+.tbl-btn.primary { background:var(--gold); color:#000; border-color:var(--gold); font-weight:600; }
+.tbl-btn.primary:hover { opacity:0.85; color:#000; }
+table { width:100%; border-collapse:collapse; }
+th { padding:11px 20px; font-size:9px; letter-spacing:2.5px; text-transform:uppercase; color:var(--white-40); text-align:left; border-bottom:1px solid var(--border-soft); }
+td { padding:13px 20px; font-size:13px; color:var(--white-60); border-bottom:1px solid rgba(255,255,255,0.03); transition:background 0.15s; }
+tr:hover td { background:var(--white-15); }
+tr:last-child td { border-bottom:none; }
+.td-name { display:flex; align-items:center; gap:10px; }
+.td-avatar { width:32px; height:32px; border-radius:50%; background:var(--gold-dim); border:1px solid var(--border); display:flex; align-items:center; justify-content:center; font-size:11px; font-weight:600; color:var(--gold); flex-shrink:0; }
+.td-sub { font-size:11px; color:var(--white-40); margin-top:1px; }
+
+/* ── BADGES ── */
+.badge { display:inline-flex; align-items:center; gap:5px; padding:4px 10px; border-radius:5px; font-size:10px; letter-spacing:1.5px; text-transform:uppercase; font-weight:500; }
+.badge-dot { width:5px; height:5px; border-radius:50%; }
+.badge-confirmed { background:rgba(74,222,128,0.1); color:var(--success); }
+.badge-confirmed .badge-dot { background:var(--success); }
+.badge-pending { background:rgba(251,191,36,0.1); color:var(--warning); }
+.badge-pending .badge-dot { background:var(--warning); }
+.badge-cancelled { background:rgba(248,113,113,0.1); color:var(--danger); }
+.badge-cancelled .badge-dot { background:var(--danger); }
+.badge-checkin { background:rgba(96,165,250,0.1); color:var(--info); }
+.badge-checkin .badge-dot { background:var(--info); }
+.badge-checkout { background:rgba(201,164,92,0.15); color:var(--gold); }
+.badge-checkout .badge-dot { background:var(--gold); }
+
+/* ── ROOMS GRID ── */
+.rooms-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:16px; }
+.room-card { background:var(--black-card); border:1px solid var(--border-soft); border-radius:14px; overflow:hidden; transition:border-color 0.2s, transform 0.2s; }
+.room-card:hover { border-color:var(--border); transform:translateY(-2px); }
+.room-img { position:relative; height:160px; overflow:hidden; }
+.room-img img { width:100%; height:100%; object-fit:cover; transition:transform 0.4s; }
+.room-card:hover .room-img img { transform:scale(1.04); }
+.room-status-pill { position:absolute; top:12px; right:12px; padding:4px 10px; border-radius:5px; font-size:9px; letter-spacing:2px; text-transform:uppercase; font-weight:600; }
+.pill-dispo { background:rgba(74,222,128,0.85); color:#000; }
+.pill-occupee { background:rgba(248,113,113,0.85); color:#fff; }
+.room-info { padding:16px 18px 18px; }
+.room-type-label { font-size:9px; letter-spacing:3px; text-transform:uppercase; color:var(--gold); margin-bottom:4px; }
+.room-name { font-family:'Cormorant Garamond',serif; font-size:17px; color:var(--white-85); margin-bottom:10px; }
+.room-meta { display:flex; gap:12px; margin-bottom:14px; }
+.room-meta-item { font-size:11px; color:var(--white-40); display:flex; align-items:center; gap:4px; }
+.room-meta-item i { font-size:10px; }
+.room-price-row { display:flex; align-items:center; justify-content:space-between; }
+.room-price { font-size:15px; font-weight:600; color:var(--white-85); }
+.room-price sub { font-size:10px; color:var(--white-40); }
+.room-edit-btn { padding:6px 12px; border-radius:6px; border:1px solid var(--border); background:transparent; color:var(--white-60); font-size:11px; cursor:pointer; transition:all 0.2s; }
+.room-edit-btn:hover { color:var(--gold); border-color:var(--gold); }
+
+/* ── CLIENTS ── */
+.client-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:16px; }
+.client-card { background:var(--black-card); border:1px solid var(--border-soft); border-radius:14px; padding:20px; transition:border-color 0.2s; }
+.client-card:hover { border-color:var(--border); }
+.client-top { display:flex; align-items:center; gap:14px; margin-bottom:16px; }
+.client-ava { width:44px; height:44px; border-radius:50%; background:var(--gold-dim); border:1px solid var(--border); display:flex; align-items:center; justify-content:center; font-family:'Cormorant Garamond',serif; font-size:16px; color:var(--gold); }
+.client-name { font-size:14px; font-weight:500; color:var(--white-85); }
+.client-email { font-size:11px; color:var(--white-40); margin-top:2px; }
+.client-stats { display:flex; justify-content:space-between; padding-top:14px; border-top:1px solid var(--border-soft); }
+.client-stat-label { font-size:9px; letter-spacing:2px; text-transform:uppercase; color:var(--white-40); margin-bottom:4px; }
+.client-stat-val { font-family:'Cormorant Garamond',serif; font-size:20px; color:var(--gold); }
+
+/* ── SEARCH ── */
+.search-bar { display:flex; align-items:center; gap:10px; background:var(--white-15); border:1px solid var(--border-soft); border-radius:8px; padding:8px 14px; margin-bottom:20px; max-width:400px; }
+.search-bar input { background:none; border:none; outline:none; color:var(--white-85); font-family:'DM Sans',sans-serif; font-size:13px; flex:1; }
+.search-bar input::placeholder { color:var(--white-40); }
+.search-bar i { color:var(--white-40); }
+
+/* ── MODAL ── */
+.modal-overlay { position:fixed; inset:0; background:rgba(0,0,0,0.8); backdrop-filter:blur(4px); z-index:200; display:none; align-items:center; justify-content:center; }
+.modal-overlay.open { display:flex; }
+.modal { background:var(--black-card); border:1px solid var(--border); border-radius:16px; width:520px; max-width:95vw; max-height:90vh; overflow-y:auto; padding:28px; animation:fadeIn 0.2s; }
+@keyframes fadeIn { from { opacity:0; transform:translateY(12px); } to { opacity:1; transform:none; } }
+.modal-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:22px; }
+.modal-title { font-family:'Cormorant Garamond',serif; font-size:22px; color:var(--gold); }
+.modal-close { background:none; border:none; color:var(--white-60); cursor:pointer; font-size:18px; transition:color 0.2s; }
+.modal-close:hover { color:var(--white); }
+.form-field { margin-bottom:16px; }
+.form-label { font-size:10px; letter-spacing:2.5px; text-transform:uppercase; color:var(--gold); margin-bottom:7px; display:block; font-weight:500; }
+.form-input { width:100%; padding:11px 14px; border-radius:8px; background:var(--black-soft); border:1px solid var(--border-soft); color:var(--white-85); font-family:'DM Sans',sans-serif; font-size:13px; outline:none; transition:border-color 0.2s; }
+.form-input:focus { border-color:var(--gold); }
+.form-row { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+.form-actions { display:flex; gap:10px; margin-top:22px; }
+.btn-cancel { flex:1; padding:13px; border-radius:8px; border:1px solid var(--border); background:transparent; color:var(--white-60); cursor:pointer; font-family:'DM Sans',sans-serif; font-size:12px; letter-spacing:2px; text-transform:uppercase; transition:all 0.2s; }
+.btn-cancel:hover { color:var(--white-85); }
+.btn-submit { flex:2; padding:13px; border-radius:8px; border:none; background:var(--gold); color:#000; cursor:pointer; font-family:'DM Sans',sans-serif; font-size:12px; letter-spacing:2px; text-transform:uppercase; font-weight:700; transition:opacity 0.2s; }
+.btn-submit:hover { opacity:0.85; }
+.btn-submit:disabled { opacity:0.5; cursor:not-allowed; }
+
+/* ── TOAST ── */
+.toast { position:fixed; bottom:28px; right:28px; background:var(--black-card); border:1px solid var(--success); border-radius:10px; padding:14px 20px; display:flex; align-items:center; gap:10px; color:var(--success); font-size:13px; z-index:999; transform:translateY(80px); transition:transform 0.3s; pointer-events:none; }
+.toast.error { border-color:var(--danger); color:var(--danger); }
+.toast.show { transform:translateY(0); }
+
+/* ── REVENUE SECTION ── */
+.revenue-row { display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-bottom:28px; }
+.occ-row { display:flex; align-items:center; gap:12px; padding:10px 0; border-bottom:1px solid var(--border-soft); }
+.occ-label { font-size:12px; color:var(--white-60); width:130px; flex-shrink:0; }
+.occ-bar-bg { flex:1; height:4px; background:var(--white-15); border-radius:2px; }
+.occ-bar { height:4px; background:linear-gradient(90deg,var(--gold),var(--gold-light)); border-radius:2px; }
+.occ-pct { font-size:12px; color:var(--gold); width:36px; text-align:right; }
+
+/* ── SCROLLBAR ── */
+::-webkit-scrollbar { width:4px; }
+::-webkit-scrollbar-track { background:var(--black); }
+::-webkit-scrollbar-thumb { background:var(--border); border-radius:2px; }
+</style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<aside class="sidebar">
+  <div class="sidebar-logo">
+    <h1>Blue Wave</h1>
+    <span>Administration</span>
+  </div>
+  <nav class="sidebar-nav">
+    <span class="nav-section-label">Principal</span>
+    <a class="nav-item active" onclick="showPage('dashboard',this)">
+      <i class="fa-solid fa-chart-line"></i> Tableau de bord
+    </a>
+    <a class="nav-item" onclick="showPage('reservations',this)">
+      <i class="fa-solid fa-calendar-check"></i> Réservations
+    </a>
+    <a class="nav-item" onclick="showPage('chambres',this)">
+      <i class="fa-solid fa-door-open"></i> Chambres
+    </a>
+    <a class="nav-item" onclick="showPage('clients',this)">
+      <i class="fa-solid fa-users"></i> Clients
+    </a>
+    <span class="nav-section-label">Finance</span>
+    <a class="nav-item" onclick="showPage('revenus',this)">
+      <i class="fa-solid fa-coins"></i> Revenus
+    </a>
+    <span class="nav-section-label">Système</span>
+    <a class="nav-item" href="index.html">
+      <i class="fa-solid fa-globe"></i> Voir le site
+    </a>
+    <a class="nav-item" href="login.html">
+      <i class="fa-solid fa-right-from-bracket"></i> Déconnexion
+    </a>
+  </nav>
+  <div class="sidebar-footer">
+    <div class="admin-avatar">
+      <div class="avatar-circle">A</div>
+      <div class="avatar-info">
+        <div class="avatar-name">Admin</div>
+        <div class="avatar-role">Gestionnaire</div>
+      </div>
+    </div>
+  </div>
+</aside>
+
+<!-- MAIN -->
+<main class="main">
+  <div class="topbar">
+    <div class="topbar-left">
+      <h2 id="page-title">Tableau de bord</h2>
+      <p id="page-date"></p>
+    </div>
+    <div class="topbar-right">
+      <div class="date-badge" id="current-date"></div>
+      <div class="topbar-btn" onclick="loadAllData()" title="Actualiser">
+        <i class="fa-solid fa-rotate-right" id="refresh-icon"></i>
+      </div>
+      <div class="topbar-btn">
+        <i class="fa-solid fa-bell"></i>
+        <span class="notif-badge" id="notif-count">0</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="content">
+
+    <!-- ══════════════════ DASHBOARD ══════════════════ -->
+    <div class="page-section active" id="page-dashboard">
+      <div id="stats-error" class="api-error" style="display:none"></div>
+      <div class="kpi-grid">
+        <div class="kpi-card">
+          <div class="kpi-icon"><i class="fa-solid fa-bed"></i></div>
+          <div class="kpi-label">Réservations ce mois</div>
+          <div class="kpi-value" id="kpi-reservations">—</div>
+          <div class="kpi-delta delta-up"><span class="spinner" style="display:inline-block"></span> Chargement...</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-icon"><i class="fa-solid fa-coins"></i></div>
+          <div class="kpi-label">Revenus du mois</div>
+          <div class="kpi-value" id="kpi-revenus"><span>MAD</span>—</div>
+          <div class="kpi-delta delta-up" id="kpi-revenus-sub">…</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-icon"><i class="fa-solid fa-percent"></i></div>
+          <div class="kpi-label">Taux d'occupation</div>
+          <div class="kpi-value" id="kpi-taux">—<span style="font-size:22px">%</span></div>
+          <div class="kpi-delta delta-up" id="kpi-checkin-sub">…</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-icon"><i class="fa-solid fa-users"></i></div>
+          <div class="kpi-label">Clients total</div>
+          <div class="kpi-value" id="kpi-clients">—</div>
+          <div class="kpi-delta delta-up"><i class="fa-solid fa-user-plus"></i> <span id="kpi-checkin-today">…</span> check-in aujourd'hui</div>
+        </div>
+      </div>
+
+      <!-- Charts -->
+      <div class="charts-row">
+        <div class="chart-card">
+          <div class="chart-header">
+            <div>
+              <div class="chart-title">Revenus mensuels</div>
+              <div class="chart-subtitle" id="chart-subtitle">6 derniers mois</div>
+            </div>
+            <div class="chart-badge">BDD Live</div>
+          </div>
+          <div class="chart-wrap">
+            <canvas id="revenueChart"></canvas>
+          </div>
+        </div>
+        <div class="chart-card">
+          <div class="chart-header">
+            <div>
+              <div class="chart-title">Répartition chambres</div>
+              <div class="chart-subtitle">Par type (BDD)</div>
+            </div>
+          </div>
+          <div class="chart-wrap">
+            <canvas id="roomTypeChart"></canvas>
+          </div>
+        </div>
+      </div>
+
+      <!-- Recent reservations -->
+      <div class="table-card">
+        <div class="table-header">
+          <div class="table-title">Réservations récentes</div>
+          <div class="table-actions">
+            <button class="tbl-btn" onclick="showPage('reservations', document.querySelectorAll('.nav-item')[1])">Voir tout</button>
+          </div>
+        </div>
+        <table>
+          <thead>
+            <tr>
+              <th>Client</th>
+              <th>Chambre</th>
+              <th>Arrivée</th>
+              <th>Départ</th>
+              <th>Montant</th>
+              <th>Statut</th>
+            </tr>
+          </thead>
+          <tbody id="dashboard-table">
+            <tr><td colspan="6" style="text-align:center;padding:28px;"><span class="api-loader"><span class="spinner"></span> Chargement depuis la base de données...</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ══════════════════ RÉSERVATIONS ══════════════════ -->
+    <div class="page-section" id="page-reservations">
+      <div class="search-bar">
+        <i class="fa-solid fa-magnifying-glass"></i>
+        <input type="text" placeholder="Rechercher une réservation..." oninput="filterTable(this.value)">
+      </div>
+      <div class="table-card">
+        <div class="table-header">
+          <div class="table-title">Toutes les réservations</div>
+          <div class="table-actions">
+            <button class="tbl-btn" onclick="exportCSV()"><i class="fa-solid fa-download" style="margin-right:6px"></i>Exporter</button>
+            <button class="tbl-btn primary" onclick="openModal()"><i class="fa-solid fa-plus" style="margin-right:6px"></i>Nouvelle</button>
+          </div>
+        </div>
+        <table>
+          <thead>
+            <tr>
+              <th>Réf.</th>
+              <th>Client</th>
+              <th>Chambre</th>
+              <th>Arrivée</th>
+              <th>Départ</th>
+              <th>Nuits</th>
+              <th>Montant</th>
+              <th>Statut</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="full-table">
+            <tr><td colspan="9" style="text-align:center;padding:28px;"><span class="api-loader"><span class="spinner"></span> Chargement...</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ══════════════════ CHAMBRES ══════════════════ -->
+    <div class="page-section" id="page-chambres">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:22px;">
+        <div>
+          <div style="font-size:11px;letter-spacing:3px;text-transform:uppercase;color:var(--gold);margin-bottom:4px;">Gestion</div>
+          <div style="font-size:18px;font-weight:500;color:var(--white-85);" id="chambre-count">Chargement...</div>
+        </div>
+        <button class="tbl-btn primary" onclick="openAddChambreModal()"><i class="fa-solid fa-plus" style="margin-right:6px"></i>Ajouter chambre</button>
+      </div>
+      <div class="rooms-grid" id="rooms-container">
+        <div style="grid-column:1/-1;text-align:center;padding:40px;"><span class="api-loader"><span class="spinner"></span> Chargement des chambres...</span></div>
+      </div>
+    </div>
+
+    <!-- ══════════════════ CLIENTS ══════════════════ -->
+    <div class="page-section" id="page-clients">
+      <div class="search-bar">
+        <i class="fa-solid fa-magnifying-glass"></i>
+        <input type="text" placeholder="Rechercher un client..." oninput="filterClients(this.value)">
+      </div>
+      <div class="client-grid" id="clients-container">
+        <div style="grid-column:1/-1;text-align:center;padding:40px;"><span class="api-loader"><span class="spinner"></span> Chargement des clients...</span></div>
+      </div>
+    </div>
+
+    <!-- ══════════════════ REVENUS ══════════════════ -->
+    <div class="page-section" id="page-revenus">
+      <div class="kpi-grid" style="margin-bottom:28px;">
+        <div class="kpi-card">
+          <div class="kpi-icon"><i class="fa-solid fa-coins"></i></div>
+          <div class="kpi-label">Revenus ce mois</div>
+          <div class="kpi-value" id="rev-mois"><span>MAD</span>—</div>
+          <div class="kpi-delta delta-up"><i class="fa-solid fa-database"></i> Données en direct</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-icon"><i class="fa-solid fa-calendar"></i></div>
+          <div class="kpi-label">Check-ins aujourd'hui</div>
+          <div class="kpi-value" id="rev-checkin">—</div>
+          <div class="kpi-delta delta-up"><i class="fa-solid fa-clock"></i> Aujourd'hui</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-icon"><i class="fa-solid fa-bed"></i></div>
+          <div class="kpi-label">Chambres occupées</div>
+          <div class="kpi-value" id="rev-occ">—</div>
+          <div class="kpi-delta delta-up"><i class="fa-solid fa-arrow-trend-up"></i> Sur <span id="rev-total-ch">6</span> chambres</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-icon"><i class="fa-solid fa-chart-pie"></i></div>
+          <div class="kpi-label">Taux d'occupation</div>
+          <div class="kpi-value" id="rev-taux">—<span style="font-size:22px">%</span></div>
+          <div class="kpi-delta delta-up"><i class="fa-solid fa-percent"></i> Ce mois</div>
+        </div>
+      </div>
+      <div class="revenue-row">
+        <div class="chart-card">
+          <div class="chart-header">
+            <div>
+              <div class="chart-title">Revenus par type de chambre</div>
+              <div class="chart-subtitle">Données réelles BDD</div>
+            </div>
+          </div>
+          <div class="chart-wrap" style="height:240px">
+            <canvas id="revenueTypeChart"></canvas>
+          </div>
+        </div>
+        <div class="chart-card">
+          <div class="chart-header">
+            <div>
+              <div class="chart-title">Occupation par chambre</div>
+              <div class="chart-subtitle">Statut en temps réel</div>
+            </div>
+          </div>
+          <div id="occ-bars" style="padding-top:8px">
+            <span class="api-loader"><span class="spinner"></span> Chargement...</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</main>
+
+<!-- ══════════════════════ MODAL Nouvelle Réservation ══════════════════════ -->
+<div class="modal-overlay" id="modal-overlay" onclick="if(event.target===this)closeModal()">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title">Nouvelle Réservation</div>
+      <button class="modal-close" onclick="closeModal()"><i class="fa-solid fa-xmark"></i></button>
+    </div>
+
+    <div class="form-row">
+      <div class="form-field">
+        <label class="form-label">Prénom client</label>
+        <input class="form-input" id="m-prenom" type="text" placeholder="ex: Marie">
+      </div>
+      <div class="form-field">
+        <label class="form-label">Nom client</label>
+        <input class="form-input" id="m-nom" type="text" placeholder="ex: Dupont">
+      </div>
+    </div>
+    <div class="form-field">
+      <label class="form-label">Email</label>
+      <input class="form-input" id="m-email" type="email" placeholder="client@email.com">
+    </div>
+    <div class="form-field">
+      <label class="form-label">Chambre</label>
+      <select class="form-input" id="m-chambre">
+        <option value="">Chargement des chambres...</option>
+      </select>
+    </div>
+    <div class="form-row">
+      <div class="form-field">
+        <label class="form-label">Date d'arrivée</label>
+        <input class="form-input" id="m-arrivee" type="date">
+      </div>
+      <div class="form-field">
+        <label class="form-label">Date de départ</label>
+        <input class="form-input" id="m-depart" type="date">
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-field">
+        <label class="form-label">Adultes</label>
+        <input class="form-input" id="m-adultes" type="number" value="2" min="1" max="6">
+      </div>
+      <div class="form-field">
+        <label class="form-label">Enfants</label>
+        <input class="form-input" id="m-enfants" type="number" value="0" min="0" max="6">
+      </div>
+    </div>
+    <div class="form-field">
+      <label class="form-label">Statut</label>
+      <select class="form-input" id="m-statut">
+        <option value="pending">En attente</option>
+        <option value="confirmed">Confirmée</option>
+        <option value="checkin">Check-in</option>
+      </select>
+    </div>
+    <div class="form-field">
+      <label class="form-label">Notes</label>
+      <input class="form-input" id="m-notes" type="text" placeholder="Notes optionnelles...">
+    </div>
+    <div id="modal-error" class="api-error" style="display:none;margin-top:12px;"></div>
+    <div class="form-actions">
+      <button class="btn-cancel" onclick="closeModal()">Annuler</button>
+      <button class="btn-submit" id="btn-save" onclick="saveReservation()">
+        <i class="fa-solid fa-save" style="margin-right:6px"></i>Enregistrer
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast">
+  <i class="fa-solid fa-circle-check" id="toast-icon"></i>
+  <span id="toast-msg">Opération réussie</span>
+</div>
+
+<script>
+// ══════════════════════════════════════════════════════════════
+//  CONFIGURATION API
+//  BASE_URL pointe vers votre application GlassFish déployée
+// ══════════════════════════════════════════════════════════════
+const BASE_URL = ''; // vide = même origine (déploiement GlassFish)
+// En développement local : const BASE_URL = 'http://localhost:8080/HotelReservation1';
+
+const API = {
+  reservations: `${BASE_URL}/api/reservations`,
+  chambres:     `${BASE_URL}/api/chambres`,
+  stats:        `${BASE_URL}/api/stats`,
+  clients:      `${BASE_URL}/api/clients`,
+};
+
+// ── État global ─────────────────────────────────────────────
+let allReservations = [];
+let allChambres     = [];
+let allClients      = [];
+let statsData       = null;
+let charts          = {};
+
+// ── Utilitaires ─────────────────────────────────────────────
+const fmt  = n => Number(n).toLocaleString('fr-FR');
+const $ = id => document.getElementById(id);
+
+async function apiFetch(url, opts = {}) {
+  const resp = await fetch(url, {
+    headers: { 'Content-Type': 'application/json', ...opts.headers },
+    ...opts
+  });
+  if (!resp.ok) throw new Error(`Erreur ${resp.status}: ${resp.statusText}`);
+  return resp.json();
+}
+
+function showToast(msg, isError = false) {
+  const t = $('toast');
+  $('toast-msg').textContent = msg;
+  $('toast-icon').className = isError ? 'fa-solid fa-circle-xmark' : 'fa-solid fa-circle-check';
+  t.className = 'toast' + (isError ? ' error' : '') + ' show';
+  setTimeout(() => t.className = 'toast' + (isError ? ' error' : ''), 3000);
+}
+
+function badge(statut) {
+  const map    = { confirmed:'badge-confirmed', pending:'badge-pending', cancelled:'badge-cancelled', checkin:'badge-checkin', checkout:'badge-checkout' };
+  const labels = { confirmed:'Confirmée', pending:'En attente', cancelled:'Annulée', checkin:'Check-in', checkout:'Check-out' };
+  return `<span class="badge ${map[statut]||'badge-pending'}"><span class="badge-dot"></span>${labels[statut]||statut}</span>`;
+}
+
+function initials(prenom, nom) {
+  return ((prenom||'').charAt(0) + (nom||'').charAt(0)).toUpperCase();
+}
+
+// ══════════════════════════════════════════════════════════════
+//  CHARGEMENT DES DONNÉES (depuis la BDD via API)
+// ══════════════════════════════════════════════════════════════
+
+async function loadStats() {
+  try {
+    statsData = await apiFetch(API.stats);
+    $('stats-error').style.display = 'none';
+
+    // KPIs
+    $('kpi-reservations').textContent = statsData.reservationsMois;
+    $('kpi-revenus').innerHTML = `<span>MAD</span>${fmt(statsData.revenusMois)}`;
+    $('kpi-taux').innerHTML = `${statsData.tauxOccupation}<span style="font-size:22px">%</span>`;
+    $('kpi-clients').textContent = statsData.totalClients;
+    $('kpi-checkin-today').textContent = statsData.checkinAujourdhui;
+    $('kpi-revenus-sub').innerHTML = `<i class="fa-solid fa-arrow-trend-up"></i> ${statsData.chambresOccupees} chambre(s) occupée(s)`;
+    $('kpi-checkin-sub').innerHTML = `<i class="fa-solid fa-right-to-bracket"></i> ${statsData.checkinAujourdhui} check-in aujourd'hui`;
+    $('notif-count').textContent = statsData.checkinAujourdhui;
+
+    // Revenus section
+    $('rev-mois').innerHTML = `<span>MAD</span>${fmt(statsData.revenusMois)}`;
+    $('rev-checkin').textContent = statsData.checkinAujourdhui;
+    $('rev-occ').textContent = statsData.chambresOccupees;
+    $('rev-taux').innerHTML = `${statsData.tauxOccupation}<span style="font-size:22px">%</span>`;
+
+    buildCharts();
+  } catch(e) {
+    $('stats-error').textContent = '⚠ Impossible de charger les statistiques : ' + e.message + ' — Vérifiez que GlassFish est démarré et la BDD connectée.';
+    $('stats-error').style.display = 'block';
+  }
+}
+
+async function loadReservations() {
+  try {
+    allReservations = await apiFetch(API.reservations);
+    renderDashboardTable();
+    renderFullTable(allReservations);
+  } catch(e) {
+    const msg = `<tr><td colspan="9" style="text-align:center;padding:28px;color:var(--danger)">
+      <i class="fa-solid fa-triangle-exclamation"></i> Erreur BDD : ${e.message}</td></tr>`;
+    $('dashboard-table').innerHTML = msg;
+    $('full-table').innerHTML = msg;
+  }
+}
+
+async function loadChambres() {
+  try {
+    allChambres = await apiFetch(API.chambres);
+    renderRooms();
+    // Remplir le select du modal
+    const sel = $('m-chambre');
+    sel.innerHTML = allChambres.map(c =>
+      `<option value="${c.id}" data-prix="${c.prixNuit}" ${!c.disponible?'disabled':''}>
+        ${c.nom} — ${fmt(c.prixNuit)} MAD/nuit${!c.disponible?' (Occupée)':''}
+      </option>`
+    ).join('');
+    const dispo = allChambres.filter(c=>c.disponible).length;
+    $('chambre-count').textContent = `${dispo} chambre${dispo>1?'s':''} disponible${dispo>1?'s':''}`;
+    // Barres d'occupation revenus
+    renderOccBars();
+  } catch(e) {
+    $('rooms-container').innerHTML = `<div style="grid-column:1/-1;padding:40px;text-align:center;color:var(--danger)">
+      Erreur chargement chambres : ${e.message}</div>`;
+  }
+}
+
+async function loadClients() {
+  try {
+    allClients = await apiFetch(API.clients);
+    renderClients();
+  } catch(e) {
+    // Fallback : extraire les clients depuis les réservations
+    if (allReservations.length) {
+      const map = {};
+      allReservations.forEach(r => {
+        const key = r.clientEmail || r.clientId;
+        if (!map[key]) map[key] = { nom:r.clientNom, prenom:r.clientPrenom, email:r.clientEmail, count:0, total:0 };
+        map[key].count++;
+        map[key].total += r.montantTotal || 0;
+      });
+      allClients = Object.values(map);
+      renderClients();
+    }
+  }
+}
+
+async function loadAllData() {
+  const icon = $('refresh-icon');
+  icon.className = 'fa-solid fa-rotate-right fa-spin';
+  await Promise.allSettled([loadStats(), loadReservations(), loadChambres(), loadClients()]);
+  icon.className = 'fa-solid fa-rotate-right';
+}
+
+// ══════════════════════════════════════════════════════════════
+//  RENDERERS
+// ══════════════════════════════════════════════════════════════
+
+function renderDashboardTable() {
+  $('dashboard-table').innerHTML = allReservations.slice(0, 6).map(r => `
+    <tr>
+      <td><div class="td-name">
+        <div class="td-avatar">${initials(r.clientPrenom, r.clientNom)}</div>
+        <div><div>${r.clientPrenom||''} ${r.clientNom||''}</div></div>
+      </div></td>
+      <td><div>${r.chambreNom||'—'}</div><div class="td-sub">${r.chambreType||''}</div></td>
+      <td>${r.dateArrivee||'—'}</td>
+      <td>${r.dateDepart||'—'}</td>
+      <td style="color:var(--gold);font-weight:500">${fmt(r.montantTotal)} MAD</td>
+      <td>${badge(r.statut)}</td>
+    </tr>`).join('') || '<tr><td colspan="6" style="text-align:center;padding:28px;color:var(--white-40)">Aucune réservation</td></tr>';
+}
+
+function renderFullTable(data) {
+  $('full-table').innerHTML = data.map(r => `
+    <tr>
+      <td style="color:var(--white-40);font-size:11px">${r.reference||r.id}</td>
+      <td><div class="td-name">
+        <div class="td-avatar">${initials(r.clientPrenom, r.clientNom)}</div>
+        <div><div>${r.clientPrenom||''} ${r.clientNom||''}</div>
+          <div class="td-sub">${r.clientEmail||''}</div></div>
+      </div></td>
+      <td>${r.chambreNom||'—'}</td>
+      <td>${r.dateArrivee||'—'}</td>
+      <td>${r.dateDepart||'—'}</td>
+      <td style="text-align:center">${r.nbNuits||'—'}</td>
+      <td style="color:var(--gold);font-weight:500">${fmt(r.montantTotal)} MAD</td>
+      <td>${badge(r.statut)}</td>
+      <td>
+        <button class="room-edit-btn" onclick="editStatut(${r.id},'${r.statut}')">
+          <i class="fa-solid fa-pen" style="margin-right:4px"></i>Éditer
+        </button>
+      </td>
+    </tr>`).join('') || '<tr><td colspan="9" style="text-align:center;padding:28px;color:var(--white-40)">Aucune réservation</td></tr>';
+}
+
+function filterTable(q) {
+  const ql = q.toLowerCase();
+  renderFullTable(allReservations.filter(r =>
+    (r.clientNom||'').toLowerCase().includes(ql) ||
+    (r.clientPrenom||'').toLowerCase().includes(ql) ||
+    (r.chambreNom||'').toLowerCase().includes(ql) ||
+    (r.reference||'').toLowerCase().includes(ql)
+  ));
+}
+
+function renderRooms() {
+  $('rooms-container').innerHTML = allChambres.map(r => `
+    <div class="room-card">
+      <div class="room-img">
+        <img src="${r.imageUrl||'https://images.unsplash.com/photo-1631049307264-da0ec9d70304?q=80&w=600'}"
+             alt="${r.nom}" loading="lazy"
+             onerror="this.src='https://images.unsplash.com/photo-1631049307264-da0ec9d70304?q=80&w=600'">
+        <div class="room-status-pill ${r.disponible?'pill-dispo':'pill-occupee'}">${r.disponible?'Disponible':'Occupée'}</div>
+      </div>
+      <div class="room-info">
+        <div class="room-type-label">${r.type}</div>
+        <div class="room-name">${r.nom}</div>
+        <div class="room-meta">
+          <div class="room-meta-item"><i class="fa-solid fa-maximize"></i> ${r.surfaceM2||'—'} m²</div>
+          <div class="room-meta-item"><i class="fa-solid fa-users"></i> ${r.capacite} pers.</div>
+          <div class="room-meta-item"><i class="fa-solid fa-bed"></i> ${r.lits} lit${r.lits>1?'s':''}</div>
+        </div>
+        <div class="room-price-row">
+          <div class="room-price">${fmt(r.prixNuit)} <sub>MAD/nuit</sub></div>
+          <button class="room-edit-btn" onclick="toggleDispo(${r.id}, ${r.disponible})">
+            <i class="fa-solid fa-${r.disponible?'lock-open':'lock'}"></i>
+          </button>
+        </div>
+      </div>
+    </div>`).join('');
+}
+
+function renderClients() {
+  $('clients-container').innerHTML = allClients.map(cl => {
+    const nom    = cl.nom || cl.clientNom || '';
+    const prenom = cl.prenom || cl.clientPrenom || '';
+    const email  = cl.email || cl.clientEmail || '';
+    const count  = cl.nombreReservations || cl.count || 0;
+    const total  = cl.totalDepense || cl.total || 0;
+    return `
+    <div class="client-card">
+      <div class="client-top">
+        <div class="client-ava">${initials(prenom, nom)}</div>
+        <div>
+          <div class="client-name">${prenom} ${nom}</div>
+          <div class="client-email">${email}</div>
+        </div>
+      </div>
+      <div class="client-stats">
+        <div>
+          <div class="client-stat-label">Réservations</div>
+          <div class="client-stat-val">${count}</div>
+        </div>
+        <div>
+          <div class="client-stat-label">Total dépensé</div>
+          <div class="client-stat-val">${fmt(total)} <span style="font-size:12px;color:var(--white-40)">MAD</span></div>
+        </div>
+      </div>
+    </div>`;
+  }).join('') || '<div style="grid-column:1/-1;text-align:center;padding:40px;color:var(--white-40)">Aucun client</div>';
+}
+
+function filterClients(q) {
+  const ql = q.toLowerCase();
+  const filtered = allClients.filter(cl =>
+    (cl.nom||'').toLowerCase().includes(ql) ||
+    (cl.prenom||'').toLowerCase().includes(ql) ||
+    (cl.email||'').toLowerCase().includes(ql)
+  );
+  const orig = allClients;
+  allClients = filtered;
+  renderClients();
+  allClients = orig;
+}
+
+function renderOccBars() {
+  if (!allChambres.length) return;
+  $('occ-bars').innerHTML = allChambres.map(ch => {
+    // compte reservations actives pour cette chambre
+    const active = allReservations.filter(r =>
+      r.chambreId === ch.id && ['confirmed','checkin'].includes(r.statut)
+    ).length;
+    const pct = ch.disponible ? 0 : 100;
+    return `<div class="occ-row">
+      <span class="occ-label">${ch.nom}</span>
+      <div class="occ-bar-bg"><div class="occ-bar" style="width:${pct}%"></div></div>
+      <span class="occ-pct">${ch.disponible?'Libre':'Occupé'}</span>
+    </div>`;
+  }).join('');
+}
+
+// ══════════════════════════════════════════════════════════════
+//  CHARTS (données dynamiques depuis la BDD)
+// ══════════════════════════════════════════════════════════════
+
+const MOIS_LABELS = ['','Jan','Fév','Mar','Avr','Mai','Jun','Jul','Aoû','Sep','Oct','Nov','Déc'];
+const CHART_OPTS = {
+  responsive: true,
+  maintainAspectRatio: false,
+  plugins: { legend: { display:false }, tooltip: { callbacks: { label: ctx => fmt(ctx.raw)+' MAD' } } },
+  scales: {
+    x: { ticks:{ color:'rgba(255,255,255,0.4)', font:{size:11} }, grid:{ color:'rgba(255,255,255,0.05)' } },
+    y: { ticks:{ color:'rgba(255,255,255,0.4)', font:{size:11}, callback: v => (v/1000)+'K' }, grid:{ color:'rgba(255,255,255,0.05)' } }
+  }
+};
+
+function buildCharts() {
+  if (!statsData) return;
+
+  // ── Revenus mensuels (BDD) ──
+  const revData   = statsData.revenusMensuel || [];
+  const revLabels = revData.map(m => MOIS_LABELS[m.mois]);
+  const revVals   = revData.map(m => m.total);
+
+  if (charts.revenue) charts.revenue.destroy();
+  const ctx1 = $('revenueChart');
+  if (ctx1) {
+    charts.revenue = new Chart(ctx1, {
+      type: 'bar',
+      data: {
+        labels: revLabels,
+        datasets: [{
+          label:'Revenus (MAD)',
+          data: revVals,
+          backgroundColor:'rgba(201,164,92,0.6)',
+          borderColor:'#c9a45c',
+          borderWidth:1, borderRadius:4,
+        }]
+      },
+      options: CHART_OPTS
+    });
+  }
+
+  // ── Répartition par type (BDD) ──
+  const repartData   = statsData.repartitionTypes || [];
+  const repartLabels = repartData.map(t => t.type);
+  const repartVals   = repartData.map(t => t.nb);
+
+  if (charts.roomType) charts.roomType.destroy();
+  const ctx2 = $('roomTypeChart');
+  if (ctx2) {
+    charts.roomType = new Chart(ctx2, {
+      type:'doughnut',
+      data:{
+        labels: repartLabels,
+        datasets:[{
+          data: repartVals,
+          backgroundColor:['#c9a45c','#e8d5a3','rgba(201,164,92,0.5)','rgba(201,164,92,0.25)','rgba(201,164,92,0.1)'],
+          borderColor:'#111111', borderWidth:2
+        }]
+      },
+      options:{
+        responsive:true, maintainAspectRatio:false,
+        plugins:{
+          legend:{ position:'bottom', labels:{ color:'rgba(255,255,255,0.6)', font:{size:11}, padding:14, usePointStyle:true, pointStyle:'rect' } }
+        },
+        cutout:'68%'
+      }
+    });
+  }
+
+  // ── Revenue type chart (revenus section) ──
+  if (charts.revenueType) charts.revenueType.destroy();
+  const ctx3 = $('revenueTypeChart');
+  if (ctx3 && repartLabels.length) {
+    charts.revenueType = new Chart(ctx3, {
+      type:'bar',
+      data:{
+        labels: repartLabels,
+        datasets:[{
+          label:'Réservations',
+          data: repartVals,
+          backgroundColor:'rgba(201,164,92,0.55)',
+          borderColor:'#c9a45c', borderWidth:1, borderRadius:4
+        }]
+      },
+      options:{
+        responsive:true, maintainAspectRatio:false,
+        plugins:{ legend:{display:false}, tooltip:{ callbacks:{ label: ctx => ctx.raw + ' résa' } } },
+        scales:{
+          x:{ ticks:{ color:'rgba(255,255,255,0.4)', font:{size:10} }, grid:{display:false} },
+          y:{ ticks:{ color:'rgba(255,255,255,0.4)', font:{size:10}, callback:v=>v }, grid:{ color:'rgba(255,255,255,0.05)' } }
+        }
+      }
+    });
+  }
+}
+
+// ══════════════════════════════════════════════════════════════
+//  ACTIONS : Créer / Éditer / Supprimer
+// ══════════════════════════════════════════════════════════════
+
+async function saveReservation() {
+  const btn = $('btn-save');
+  const errDiv = $('modal-error');
+  errDiv.style.display = 'none';
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spinner" style="display:inline-block;margin-right:8px"></span>Enregistrement...';
+
+  const payload = {
+    clientNom:    $('m-nom').value.trim(),
+    clientPrenom: $('m-prenom').value.trim(),
+    clientEmail:  $('m-email').value.trim(),
+    chambreId:    parseInt($('m-chambre').value),
+    dateArrivee:  $('m-arrivee').value,
+    dateDepart:   $('m-depart').value,
+    nbAdultes:    parseInt($('m-adultes').value),
+    nbEnfants:    parseInt($('m-enfants').value),
+    statut:       $('m-statut').value,
+    notes:        $('m-notes').value.trim(),
+  };
+
+  if (!payload.clientNom || !payload.clientEmail || !payload.chambreId || !payload.dateArrivee || !payload.dateDepart) {
+    errDiv.textContent = 'Veuillez remplir tous les champs obligatoires.';
+    errDiv.style.display = 'block';
+    btn.disabled = false;
+    btn.innerHTML = '<i class="fa-solid fa-save" style="margin-right:6px"></i>Enregistrer';
+    return;
+  }
+
+  try {
+    await apiFetch(API.reservations, { method:'POST', body:JSON.stringify(payload) });
+    closeModal();
+    showToast('Réservation enregistrée avec succès !');
+    await loadAllData();
+  } catch(e) {
+    errDiv.textContent = 'Erreur : ' + e.message;
+    errDiv.style.display = 'block';
+    showToast('Erreur lors de l\'enregistrement', true);
+  } finally {
+    btn.disabled = false;
+    btn.innerHTML = '<i class="fa-solid fa-save" style="margin-right:6px"></i>Enregistrer';
+  }
+}
+
+async function editStatut(id, currentStatut) {
+  const statuts = ['pending','confirmed','checkin','checkout','cancelled'];
+  const labels  = { pending:'En attente', confirmed:'Confirmée', checkin:'Check-in', checkout:'Check-out', cancelled:'Annulée' };
+  const options = statuts.map(s => `${s === currentStatut ? '✓ ' : '   '}${labels[s]}`).join('\n');
+  const choix = prompt(`Changer le statut de la réservation #${id} :\n\n${options}\n\nEntrez le nouveau statut (pending/confirmed/checkin/checkout/cancelled) :`, currentStatut);
+  if (!choix || choix === currentStatut || !statuts.includes(choix)) return;
+  try {
+    await apiFetch(API.reservations, { method:'PUT', body:JSON.stringify({ id, statut:choix }) });
+    showToast('Statut mis à jour : ' + labels[choix]);
+    await loadReservations();
+  } catch(e) {
+    showToast('Erreur mise à jour : ' + e.message, true);
+  }
+}
+
+async function toggleDispo(id, currentDispo) {
+  const newDispo = !currentDispo;
+  const msg = newDispo ? 'Marquer comme DISPONIBLE ?' : 'Marquer comme OCCUPÉE ?';
+  if (!confirm(msg)) return;
+  try {
+    await apiFetch(API.chambres, { method:'PUT', body:JSON.stringify({ id, disponible:newDispo }) });
+    showToast(newDispo ? 'Chambre marquée disponible' : 'Chambre marquée occupée');
+    await loadChambres();
+  } catch(e) {
+    showToast('Erreur : ' + e.message, true);
+  }
+}
+
+// ══════════════════════════════════════════════════════════════
+//  NAVIGATION
+// ══════════════════════════════════════════════════════════════
+
+function showPage(page, el) {
+  document.querySelectorAll('.page-section').forEach(s => s.classList.remove('active'));
+  $('page-'+page).classList.add('active');
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  if(el) el.classList.add('active');
+  const titles = { dashboard:'Tableau de bord', reservations:'Réservations', chambres:'Chambres', clients:'Clients', revenus:'Revenus' };
+  $('page-title').textContent = titles[page] || page;
+  setTimeout(buildCharts, 80);
+}
+
+function openModal() {
+  $('modal-overlay').classList.add('open');
+  $('modal-error').style.display = 'none';
+}
+function closeModal() { $('modal-overlay').classList.remove('open'); }
+
+function openAddChambreModal() {
+  showToast('Fonctionnalité d\'ajout de chambre disponible via le Servlet ChambreServlet');
+}
+
+// ── Export CSV ──
+function exportCSV() {
+  const rows = [['Référence','Prénom','Nom','Email','Chambre','Type','Arrivée','Départ','Nuits','Montant','Statut']];
+  allReservations.forEach(r => rows.push([
+    r.reference||r.id, r.clientPrenom||'', r.clientNom||'', r.clientEmail||'',
+    r.chambreNom||'', r.chambreType||'',
+    r.dateArrivee||'', r.dateDepart||'', r.nbNuits||'',
+    r.montantTotal||0, r.statut
+  ]));
+  const csv = rows.map(r => r.map(v => `"${String(v).replace(/"/g,'""')}"`).join(',')).join('\n');
+  const a = document.createElement('a');
+  a.href = 'data:text/csv;charset=utf-8,\uFEFF' + encodeURIComponent(csv);
+  a.download = `reservations-bluewave-${new Date().toISOString().slice(0,10)}.csv`;
+  a.click();
+  showToast('Export CSV téléchargé !');
+}
+
+// ── Date ──
+function initDate() {
+  const now = new Date();
+  const opts = { weekday:'long', year:'numeric', month:'long', day:'numeric' };
+  const s = now.toLocaleDateString('fr-FR', opts);
+  $('current-date').textContent = s.charAt(0).toUpperCase()+s.slice(1);
+  $('page-date').textContent = 'Données en direct depuis la base de données';
+}
+
+// ══════════════════════════════════════════════════════════════
+//  INITIALISATION
+// ══════════════════════════════════════════════════════════════
+initDate();
+loadAllData();
+</script>
+</body>
+</html>
