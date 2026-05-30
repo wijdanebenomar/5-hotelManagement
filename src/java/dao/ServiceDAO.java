@@ -1,3 +1,7 @@
+
+// ServiceDAO - Accès aux données des services
+// Auteur : Yousra Benrhalem
+// Description : Gestion CRUD des services hotel BlueWave
 package dao;
 
 import java.sql.*;
