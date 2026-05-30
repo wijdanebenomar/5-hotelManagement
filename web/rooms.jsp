@@ -112,8 +112,7 @@ nav ul li a:hover::after,nav ul li a.active::after{width:100%;}
 ══════════════════════════════════════ */
 .modal-overlay{
   display:none;position:fixed;inset:0;z-index:2000;
-  background:rgba(0,18,30,0.85);backdrop-filter:blur(6px);
-  align-items:center;justify-content:center;padding:20px;
+background:rgba(0,10,18,0.97);  align-items:center;justify-content:center;padding:20px;
 }
 .modal-overlay.active{display:flex;}
 
