@@ -1,3 +1,7 @@
+// ReservationDAO - Accès aux données des réservations
+// Auteur : Yousra Benrhalem
+// Description : Gestion CRUD des réservations hotel BlueWave
+
 package dao;
 
 import java.sql.*;
