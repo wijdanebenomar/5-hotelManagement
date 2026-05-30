@@ -1,3 +1,6 @@
+// RoomDAO - Accès aux données des chambres
+// Auteur : Yousra Benrhalem
+// Description : Gestion CRUD des chambres hotel BlueWave
 package dao;
 
 import java.sql.*;
