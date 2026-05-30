@@ -14,10 +14,11 @@ long maintenance = rooms.stream().filter(r -> "MAINTENANCE".equals(r.getStatus()
 %>
 <!DOCTYPE html>
 <html lang="fr">
+<!-- Gestion des chambres - Yousra Benrhalem -->
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Blue Wave Admin — Chambres</title>
+<title>BlueWave | Gestion des Chambres</title>
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 <style>
