@@ -5,28 +5,26 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Blue Wave — Chambres disponibles</title>
+<title>BlueWave | Chambres disponibles</title>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,300;0,400;1,300;1,400&family=Jost:wght@200;300;400;500&family=Cormorant+Garamond:ital,wght@0,300;1,300&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 <style>
+/* ── Yousra Benrhalem : refonte rooms.jsp avec formulaire multi-étapes ── */
 :root{
   --midnight:#004554; --midnight-2:#003040; --midnight-3:#002535;
   --moonstone:#44A6B5; --moonstone-2:#5cb8c6;
-  --lightblue:#B2D5E2; --alice:#E9F1F6; --timber:#D3D0C8;
+  --lightblue:#B2D5E2; --alice:#E9F1F6;
   --moon-line:rgba(68,166,181,0.28); --moon-dim:rgba(68,166,181,0.10);
   --white:#f8fbfc; --fog:rgba(233,241,246,0.65); --fog-low:rgba(178,213,226,0.45);
-  --fog-ghost:rgba(178,213,226,0.08);
 }
 *{margin:0;padding:0;box-sizing:border-box;} html{scroll-behavior:smooth;}
 body{font-family:'Jost',sans-serif;background:var(--midnight-3);color:var(--white);min-height:100vh;}
 
-/* ── HEADER ── */
-header{
-  position:fixed;top:0;left:0;right:0;z-index:1000;height:88px;
+/* HEADER */
+header{position:fixed;top:0;left:0;right:0;z-index:1000;height:88px;
   display:flex;align-items:center;justify-content:space-between;padding:0 52px;
   background:rgba(0,37,53,0.95);backdrop-filter:blur(24px);
-  border-bottom:1px solid var(--moon-line);
-}
+  border-bottom:1px solid var(--moon-line);}
 .logo-main{font-family:'Playfair Display',serif;font-size:22px;font-weight:400;
   letter-spacing:6px;color:var(--white);text-transform:uppercase;text-decoration:none;display:block;}
 .logo-sub{font-family:'Cormorant Garamond',serif;font-size:11px;font-style:italic;
@@ -44,13 +42,11 @@ nav ul li a:hover::after,nav ul li a.active::after{width:100%;}
 .nav-cta:hover{background:var(--moonstone)!important;color:var(--midnight-3)!important;}
 .nav-cta::after{display:none!important;}
 
-/* ── HERO BANNER ── */
-.hero-banner{
-  width:100%;height:380px;position:relative;
+/* HERO */
+.hero-banner{width:100%;height:380px;position:relative;
   background-image:url('https://images.unsplash.com/photo-1631049307264-da0ec9d70304?q=80&w=1600&auto=format&fit=crop');
   background-size:cover;background-position:center;
-  display:flex;align-items:flex-end;padding-bottom:60px;margin-top:88px;
-}
+  display:flex;align-items:flex-end;padding-bottom:60px;margin-top:88px;}
 .hero-banner::after{content:'';position:absolute;inset:0;
   background:linear-gradient(to bottom,rgba(0,37,53,.4),rgba(0,37,53,.92));}
 .hero-banner-content{position:relative;z-index:2;padding:0 7%;}
@@ -61,68 +57,113 @@ nav ul li a:hover::after,nav ul li a.active::after{width:100%;}
   font-weight:300;line-height:1.1;color:var(--white);}
 .hero-banner-content h1 em{font-style:italic;color:var(--moonstone-2);}
 
-/* ── WAVE SVG ── */
+/* WAVE */
 .wave-sep{display:block;width:100%;height:60px;margin-top:-2px;}
 .wave-sep svg{width:100%;height:100%;}
 
-/* ── PAGE BODY ── */
+/* PAGE */
 .page-body{max-width:1160px;margin:0 auto;padding:20px 5% 100px;}
 
-/* ── ALERTS ── */
-.alert-error{
-  background:rgba(68,100,130,0.15);border:1px solid rgba(68,166,181,0.3);
+/* COMPTEUR */
+.rooms-count{font-size:11px;letter-spacing:3px;text-transform:uppercase;
+  color:var(--moonstone);margin-bottom:28px;display:flex;align-items:center;gap:10px;}
+.rooms-count::after{content:'';flex:1;height:1px;background:var(--moon-line);}
+
+/* ALERTS */
+.alert-error{background:rgba(68,100,130,0.15);border:1px solid rgba(68,166,181,0.3);
   color:var(--lightblue);border-radius:4px;padding:18px 24px;
-  display:flex;align-items:center;gap:14px;font-size:14px;margin-bottom:36px;
-}
+  display:flex;align-items:center;gap:14px;font-size:14px;margin-bottom:36px;}
 .alert-error i{font-size:20px;flex-shrink:0;color:var(--moonstone);}
 .empty-state{text-align:center;padding:100px 20px;color:var(--fog-low);}
 .empty-state i{font-size:52px;color:var(--moon-line);display:block;margin-bottom:20px;}
 .empty-state p{font-family:'Playfair Display',serif;font-size:22px;font-weight:300;}
 
-/* ── ROOM CARD ── */
-.room-card{
-  border:1px solid var(--moon-line);overflow:hidden;
-  margin-bottom:3px;transition:transform .3s,box-shadow .3s;
-  background:rgba(0,48,64,0.5);
-}
+/* ROOM CARD */
+.room-card{border:1px solid var(--moon-line);overflow:hidden;margin-bottom:24px;
+  transition:transform .3s,box-shadow .3s;background:rgba(0,48,64,0.5);}
 .room-card:hover{transform:translateY(-3px);box-shadow:0 24px 60px rgba(0,0,0,.45);}
 .card-grid{display:grid;grid-template-columns:360px 1fr;min-height:280px;}
-
-/* IMAGE */
 .card-img{position:relative;overflow:hidden;}
 .card-img img{width:100%;height:100%;object-fit:cover;transition:transform .6s;
   display:block;filter:brightness(.75) saturate(.9);}
 .room-card:hover .card-img img{transform:scale(1.06);filter:brightness(.85) saturate(1);}
-.card-badge{
-  position:absolute;top:20px;left:20px;
-  background:var(--moonstone);color:var(--midnight-3);
-  font-size:9px;font-weight:500;letter-spacing:2.5px;text-transform:uppercase;
-  padding:6px 14px;border-radius:1px;
-}
-
-/* BODY */
+.card-badge{position:absolute;top:20px;left:20px;background:var(--moonstone);
+  color:var(--midnight-3);font-size:9px;font-weight:500;letter-spacing:2.5px;
+  text-transform:uppercase;padding:6px 14px;border-radius:1px;}
 .card-body{padding:32px 36px;display:flex;flex-direction:column;justify-content:space-between;gap:24px;}
 .card-type{font-size:9px;letter-spacing:4px;text-transform:uppercase;color:var(--moonstone);font-weight:500;}
-.card-title{font-family:'Playfair Display',serif;font-size:28px;font-weight:300;
-  color:var(--white);margin:6px 0 10px;}
+.card-title{font-family:'Playfair Display',serif;font-size:28px;font-weight:300;color:var(--white);margin:6px 0 10px;}
 .card-desc{font-size:13px;color:var(--fog-low);line-height:1.8;font-weight:300;}
-.card-price{
-  font-family:'Playfair Display',serif;font-size:36px;font-weight:300;
-  color:var(--moonstone-2);margin:4px 0;
-}
+.card-price{font-family:'Playfair Display',serif;font-size:36px;font-weight:300;color:var(--moonstone-2);margin:4px 0;}
 .card-price small{font-size:14px;color:var(--fog-low);font-family:'Jost',sans-serif;}
 
-/* ── BOOKING FORM INSIDE CARD ── */
-.resa-form{
-  background:rgba(0,69,84,0.3);border:1px solid var(--moon-line);
-  padding:24px 26px;
+/* BOUTON RÉSERVER */
+.btn-reserver{
+  display:inline-flex;align-items:center;gap:10px;
+  padding:14px 32px;background:var(--moonstone);color:var(--midnight-3);
+  border:none;font-family:'Jost',sans-serif;font-size:10px;font-weight:500;
+  letter-spacing:3px;text-transform:uppercase;cursor:pointer;
+  transition:opacity .3s,transform .2s;margin-top:8px;
 }
-.form-section-title{
-  font-size:9px;letter-spacing:3px;text-transform:uppercase;color:var(--moonstone);
-  font-weight:500;margin-bottom:20px;display:flex;align-items:center;gap:12px;
+.btn-reserver:hover{opacity:.85;transform:translateX(4px);}
+
+/* ══════════════════════════════════════
+   MODAL OVERLAY
+══════════════════════════════════════ */
+.modal-overlay{
+  display:none;position:fixed;inset:0;z-index:2000;
+  background:rgba(0,18,30,0.85);backdrop-filter:blur(6px);
+  align-items:center;justify-content:center;padding:20px;
 }
-.form-section-title::after{content:'';flex:1;height:1px;background:var(--moon-line);}
+.modal-overlay.active{display:flex;}
+
+.modal-box{
+  background:var(--midnight-2);border:1px solid var(--moon-line);
+  width:100%;max-width:620px;max-height:90vh;overflow-y:auto;
+  position:relative;animation:slideUp .35s cubic-bezier(.25,.46,.45,.94);
+}
+@keyframes slideUp{from{opacity:0;transform:translateY(30px);}to{opacity:1;transform:translateY(0);}}
+
+.modal-close{
+  position:absolute;top:18px;right:20px;background:none;border:none;
+  color:var(--fog-low);font-size:18px;cursor:pointer;transition:color .2s;z-index:10;
+}
+.modal-close:hover{color:var(--white);}
+
+/* STEPPER */
+.modal-stepper{
+  display:flex;align-items:center;padding:24px 32px 0;gap:0;
+}
+.step-item{display:flex;align-items:center;gap:10px;flex:1;}
+.step-circle{
+  width:32px;height:32px;border-radius:50%;border:1px solid var(--moon-line);
+  display:flex;align-items:center;justify-content:center;
+  font-size:11px;font-weight:500;color:var(--fog-low);
+  transition:all .3s;flex-shrink:0;
+}
+.step-item.active .step-circle{background:var(--moonstone);border-color:var(--moonstone);color:var(--midnight-3);}
+.step-item.done .step-circle{background:rgba(68,166,181,0.2);border-color:var(--moonstone);color:var(--moonstone);}
+.step-label{font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--fog-low);transition:color .3s;}
+.step-item.active .step-label{color:var(--moonstone);}
+.step-item.done .step-label{color:var(--moonstone);}
+.step-line{flex:1;height:1px;background:var(--moon-line);margin:0 12px;}
+
+/* MODAL HEADER */
+.modal-header{padding:20px 32px 0;}
+.modal-room-name{font-family:'Playfair Display',serif;font-size:22px;font-weight:300;color:var(--white);}
+.modal-room-price{font-size:12px;color:var(--moonstone);letter-spacing:2px;margin-top:4px;}
+
+/* ÉTAPES */
+.step-panel{display:none;padding:24px 32px 32px;}
+.step-panel.active{display:block;}
+
+.step-title{font-size:9px;letter-spacing:3px;text-transform:uppercase;color:var(--moonstone);
+  font-weight:500;margin-bottom:20px;display:flex;align-items:center;gap:12px;}
+.step-title::after{content:'';flex:1;height:1px;background:var(--moon-line);}
+
+/* CHAMPS */
 .fields-row{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:16px;}
+.fields-row.single{grid-template-columns:1fr;}
 .field{display:flex;flex-direction:column;gap:6px;}
 .field label{font-size:9px;letter-spacing:2.5px;text-transform:uppercase;color:var(--moonstone);font-weight:500;}
 .field-wrap{position:relative;}
@@ -140,45 +181,44 @@ nav ul li a:hover::after,nav ul li a.active::after{width:100%;}
 .field select option{background:#002535;color:var(--white);}
 
 /* SERVICES */
-.svc-section{margin-bottom:18px;}
-.svc-title{font-size:9px;letter-spacing:2.5px;text-transform:uppercase;
-  color:var(--moonstone);font-weight:500;margin-bottom:12px;
-  display:flex;align-items:center;gap:10px;}
-.svc-title::after{content:'';flex:1;height:1px;background:var(--moon-line);}
-.svc-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px;}
-.svc-item{
-  display:flex;align-items:center;gap:8px;padding:10px 12px;
+.svc-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:20px;}
+.svc-item{display:flex;align-items:center;gap:8px;padding:12px 14px;
   background:rgba(0,37,53,0.6);border:1px solid rgba(178,213,226,.08);
-  cursor:pointer;transition:border-color .3s,background .3s;
-}
+  cursor:pointer;transition:border-color .3s,background .3s;}
 .svc-item:hover{border-color:var(--moon-line);background:var(--moon-dim);}
 .svc-item input[type=checkbox]{accent-color:var(--moonstone);}
 .svc-item span{font-size:12px;color:var(--fog);font-weight:300;}
 .svc-price{font-size:11px;color:var(--moonstone-2);margin-left:auto;white-space:nowrap;}
 
-/* SUBMIT */
-.submit-btn{
-  width:100%;padding:14px;background:var(--moonstone);color:var(--midnight-3);border:none;
-  font-family:'Jost',sans-serif;font-size:10px;font-weight:500;
-  letter-spacing:3px;text-transform:uppercase;cursor:pointer;transition:opacity .3s;
-  display:flex;align-items:center;justify-content:center;gap:10px;
+/* RÉSUMÉ TOTAL */
+.total-bar{
+  background:rgba(68,166,181,0.08);border:1px solid var(--moon-line);
+  padding:14px 18px;display:flex;justify-content:space-between;align-items:center;
+  margin-bottom:20px;
 }
-.submit-btn:hover{opacity:.85;}
+.total-bar span{font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--fog-low);}
+.total-bar strong{font-family:'Playfair Display',serif;font-size:22px;color:var(--moonstone-2);}
 
-/* ── FOOTER ── */
-footer{
-  background:var(--midnight);border-top:1px solid var(--moon-line);
-  padding:32px 5%;text-align:center;
-  font-size:11px;color:rgba(178,213,226,.2);letter-spacing:.5px;
-}
+/* BOUTONS NAVIGATION */
+.modal-nav{display:flex;gap:12px;margin-top:4px;}
+.btn-prev{flex:1;padding:13px;background:transparent;border:1px solid var(--moon-line);
+  color:var(--fog);font-family:'Jost',sans-serif;font-size:10px;letter-spacing:3px;
+  text-transform:uppercase;cursor:pointer;transition:border-color .3s,color .3s;}
+.btn-prev:hover{border-color:var(--moonstone);color:var(--moonstone);}
+.btn-next,.btn-submit{flex:2;padding:13px;background:var(--moonstone);border:none;
+  color:var(--midnight-3);font-family:'Jost',sans-serif;font-size:10px;font-weight:500;
+  letter-spacing:3px;text-transform:uppercase;cursor:pointer;transition:opacity .3s;}
+.btn-next:hover,.btn-submit:hover{opacity:.85;}
+
+/* FOOTER */
+footer{background:var(--midnight);border-top:1px solid var(--moon-line);
+  padding:32px 5%;text-align:center;font-size:11px;color:rgba(178,213,226,.2);letter-spacing:.5px;}
 
 @media(max-width:900px){
-  .card-grid{grid-template-columns:1fr;}
-  .card-img{height:220px;}
-  .fields-row,.svc-grid{grid-template-columns:1fr;}
-  header{padding:0 24px;}
+  .card-grid{grid-template-columns:1fr;} .card-img{height:220px;}
+  header{padding:0 24px;} .fields-row{grid-template-columns:1fr;} .svc-grid{grid-template-columns:1fr;}
 }
-@media(max-width:600px){nav ul{display:none;}.hero-banner-content h1{font-size:32px;}}
+@media(max-width:600px){nav ul{display:none;}.hero-banner-content h1{font-size:32px;}.modal-box{margin:10px;}}
 </style>
 </head>
 <body>
@@ -191,6 +231,7 @@ String checkout = (String) request.getAttribute("checkout");
 String errorMsg = (String) request.getAttribute("errorMsg");
 if(checkin  == null) checkin  = "";
 if(checkout == null) checkout = "";
+int roomCount = (roomTypes != null) ? roomTypes.size() : 0;
 %>
 
 <header>
@@ -231,8 +272,11 @@ if(checkout == null) checkout = "";
     <i class="fa-regular fa-face-sad-tear"></i>
     <p>Aucune chambre disponible.<br><span style="font-family:'Jost',sans-serif;font-size:14px;color:var(--fog-low);">Veuillez modifier vos critères de recherche.</span></p>
   </div>
-  <% } else { for(RoomType rt : roomTypes) { %>
+  <% } else { %>
 
+  <div class="rooms-count"><%= roomCount %> chambre<%= roomCount > 1 ? "s" : "" %> disponible<%= roomCount > 1 ? "s" : "" %></div>
+
+  <% for(RoomType rt : roomTypes) { %>
   <div class="room-card">
     <div class="card-grid">
       <div class="card-img">
@@ -246,65 +290,196 @@ if(checkout == null) checkout = "";
           <div class="card-desc"><%= rt.getDescription() %></div>
           <div class="card-price"><%= rt.getPrice() %> MAD <small>/ nuit</small></div>
         </div>
-
-        <div class="resa-form">
-          <div class="form-section-title">Réserver cette chambre</div>
-          <form action="check-availability" method="post">
-            <input type="hidden" name="roomTypeId" value="<%= rt.getId() %>">
-            <input type="hidden" name="checkin"    value="<%= checkin %>">
-            <input type="hidden" name="checkout"   value="<%= checkout %>">
-
-            <div class="fields-row">
-              <div class="field">
-                <label>Nom complet</label>
-                <div class="field-wrap">
-                  <i class="fa-regular fa-user ico"></i>
-                  <input type="text" name="name" placeholder="Votre nom complet" required>
-                </div>
-              </div>
-              <div class="field">
-                <label>Email</label>
-                <div class="field-wrap">
-                  <i class="fa-regular fa-envelope ico"></i>
-                  <input type="email" name="email" placeholder="Votre email" required>
-                </div>
-              </div>
-            </div>
-            <div class="fields-row" style="grid-template-columns:1fr;">
-              <div class="field">
-                <label>Téléphone</label>
-                <div class="field-wrap">
-                  <i class="fa-solid fa-phone ico"></i>
-                  <input type="text" name="phone" placeholder="Votre téléphone">
-                </div>
-              </div>
-            </div>
-
-            <div class="svc-section">
-              <div class="svc-title">Services optionnels</div>
-              <div class="svc-grid">
-                <% for(Service s : services) { %>
-                <label class="svc-item">
-                  <input type="checkbox" name="services" value="<%= s.getId() %>">
-                  <span><%= s.getName() %></span>
-                  <span class="svc-price"><%= s.getPrice() %> MAD</span>
-                </label>
-                <% } %>
-              </div>
-            </div>
-
-            <button type="submit" class="submit-btn">
-              <i class="fa-solid fa-arrow-right"></i> Vérifier la disponibilité
-            </button>
-          </form>
-        </div>
+        <button class="btn-reserver"
+          onclick="openModal('<%= rt.getId() %>', '<%= rt.getName() %>', '<%= rt.getPrice() %>')">
+          <i class="fa-solid fa-arrow-right"></i> Réserver cette chambre
+        </button>
       </div>
     </div>
   </div>
+  <% } %>
+  <% } %>
+</div>
 
-  <% } } %>
+<!-- ══ MODAL RÉSERVATION ══ -->
+<div class="modal-overlay" id="modalOverlay" onclick="closeModalOutside(event)">
+  <div class="modal-box">
+    <button class="modal-close" onclick="closeModal()"><i class="fa-solid fa-xmark"></i></button>
+
+    <!-- STEPPER -->
+    <div class="modal-stepper">
+      <div class="step-item active" id="step-indicator-1">
+        <div class="step-circle">1</div>
+        <div class="step-label">Vos informations</div>
+      </div>
+      <div class="step-line"></div>
+      <div class="step-item" id="step-indicator-2">
+        <div class="step-circle">2</div>
+        <div class="step-label">Services</div>
+      </div>
+    </div>
+
+    <div class="modal-header">
+      <div class="modal-room-name" id="modalRoomName">Suite Deluxe</div>
+      <div class="modal-room-price" id="modalRoomPrice"></div>
+    </div>
+
+    <form action="check-availability" method="post" id="reservationForm">
+      <input type="hidden" name="roomTypeId" id="hiddenRoomTypeId">
+      <input type="hidden" name="checkin"    value="<%= checkin %>">
+      <input type="hidden" name="checkout"   value="<%= checkout %>">
+
+      <!-- ÉTAPE 1 : Infos personnelles + dates -->
+      <div class="step-panel active" id="panel-1">
+        <div class="step-title">Informations personnelles</div>
+        <div class="fields-row">
+          <div class="field">
+            <label>Nom complet</label>
+            <div class="field-wrap">
+              <i class="fa-regular fa-user ico"></i>
+              <input type="text" name="name" placeholder="Votre nom complet" required>
+            </div>
+          </div>
+          <div class="field">
+            <label>Email</label>
+            <div class="field-wrap">
+              <i class="fa-regular fa-envelope ico"></i>
+              <input type="email" name="email" placeholder="Votre email" required>
+            </div>
+          </div>
+        </div>
+        <div class="fields-row single">
+          <div class="field">
+            <label>Téléphone</label>
+            <div class="field-wrap">
+              <i class="fa-solid fa-phone ico"></i>
+              <input type="text" name="phone" placeholder="Votre téléphone">
+            </div>
+          </div>
+        </div>
+        <div class="step-title" style="margin-top:8px;">Dates du séjour</div>
+        <div class="fields-row">
+          <div class="field">
+            <label>Date d'arrivée</label>
+            <div class="field-wrap">
+              <i class="fa-regular fa-calendar ico"></i>
+              <input type="date" name="checkinDate" value="<%= checkin %>" required>
+            </div>
+          </div>
+          <div class="field">
+            <label>Date de départ</label>
+            <div class="field-wrap">
+              <i class="fa-regular fa-calendar ico"></i>
+              <input type="date" name="checkoutDate" value="<%= checkout %>" required>
+            </div>
+          </div>
+        </div>
+        <div class="modal-nav">
+          <button type="button" class="btn-next" onclick="goToStep2()">
+            Suivant <i class="fa-solid fa-arrow-right"></i>
+          </button>
+        </div>
+      </div>
+
+      <!-- ÉTAPE 2 : Services -->
+      <div class="step-panel" id="panel-2">
+        <div class="step-title">Services optionnels</div>
+        <div class="svc-grid">
+          <% if(services != null) { for(Service s : services) { %>
+          <label class="svc-item">
+            <input type="checkbox" name="services" value="<%= s.getId() %>"
+              onchange="updateTotal()">
+            <span><%= s.getName() %></span>
+            <span class="svc-price" data-price="<%= s.getPrice() %>"><%= s.getPrice() %> MAD</span>
+          </label>
+          <% } } %>
+        </div>
+        <div class="total-bar">
+          <span>Total estimé</span>
+          <strong id="totalPrice">— MAD</strong>
+        </div>
+        <div class="modal-nav">
+          <button type="button" class="btn-prev" onclick="goToStep1()">
+            <i class="fa-solid fa-arrow-left"></i> Retour
+          </button>
+          <button type="submit" class="btn-submit">
+            <i class="fa-solid fa-check"></i> Confirmer la réservation
+          </button>
+        </div>
+      </div>
+
+    </form>
+  </div>
 </div>
 
 <footer>© 2026 Blue Wave Hôtel. Tous droits réservés.</footer>
+
+<script>
+var basePrice = 0;
+
+function openModal(roomTypeId, roomName, price) {
+  document.getElementById('hiddenRoomTypeId').value = roomTypeId;
+  document.getElementById('modalRoomName').textContent = roomName;
+  basePrice = parseFloat(price) || 0;
+  document.getElementById('modalRoomPrice').textContent = price + ' MAD / nuit';
+  document.getElementById('modalOverlay').classList.add('active');
+  document.body.style.overflow = 'hidden';
+  goToStep1();
+  updateTotal();
+}
+
+function closeModal() {
+  document.getElementById('modalOverlay').classList.remove('active');
+  document.body.style.overflow = '';
+}
+
+function closeModalOutside(e) {
+  if (e.target === document.getElementById('modalOverlay')) closeModal();
+}
+
+function goToStep1() {
+  document.getElementById('panel-1').classList.add('active');
+  document.getElementById('panel-2').classList.remove('active');
+  document.getElementById('step-indicator-1').classList.add('active');
+  document.getElementById('step-indicator-1').classList.remove('done');
+  document.getElementById('step-indicator-2').classList.remove('active','done');
+}
+
+function goToStep2() {
+  var name  = document.querySelector('[name="name"]').value.trim();
+  var email = document.querySelector('[name="email"]').value.trim();
+  var cin   = document.querySelector('[name="checkinDate"]').value;
+  var cout  = document.querySelector('[name="checkoutDate"]').value;
+  if (!name || !email || !cin || !cout) {
+    alert('Veuillez remplir tous les champs obligatoires.');
+    return;
+  }
+  if (cin >= cout) {
+    alert('La date de départ doit être après la date d\'arrivée.');
+    return;
+  }
+  document.getElementById('panel-1').classList.remove('active');
+  document.getElementById('panel-2').classList.add('active');
+  document.getElementById('step-indicator-1').classList.remove('active');
+  document.getElementById('step-indicator-1').classList.add('done');
+  document.getElementById('step-indicator-2').classList.add('active');
+  updateTotal();
+}
+
+function updateTotal() {
+  var checkboxes = document.querySelectorAll('[name="services"]:checked');
+  var servicesTotal = 0;
+  checkboxes.forEach(function(cb) {
+    var priceEl = cb.closest('.svc-item').querySelector('.svc-price');
+    servicesTotal += parseFloat(priceEl.getAttribute('data-price')) || 0;
+  });
+  var total = basePrice + servicesTotal;
+  document.getElementById('totalPrice').textContent = total.toFixed(0) + ' MAD';
+}
+
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Escape') closeModal();
+});
+</script>
 </body>
 </html>
