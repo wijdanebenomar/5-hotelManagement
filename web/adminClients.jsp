@@ -10,10 +10,11 @@ for (Map<String,Object> c : clientMap.values()) grandTotal += (double) c.get("to
 %>
 <!DOCTYPE html><html lang="fr"><head>
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Blue Wave Admin — Clients</title>
+<title>BlueWave | Gestion des Clients</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 <style><%@ include file="adminStyle.css" %></style>
+<!-- Gestion des clients - Yousra Benrhalem -->
 </head><body><div class="layout">
 <aside class="sidebar">
   <div class="sidebar-brand"><div class="brand-icon"><i class="fa-solid fa-water"></i></div><div><div class="brand-name">Blue Wave</div><div class="brand-sub">Administration</div></div></div>
