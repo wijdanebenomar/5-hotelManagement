@@ -940,6 +940,10 @@ table {
   border-collapse: collapse;
 }
 
+button:hover{
+    opacity:0.9;
+}
+
 /* ── RESPONSIVE ── */
 @media(max-width:1100px) {
   .stats-row {
@@ -958,3 +962,12 @@ table {
   }
 }
 
+@media(max-width:600px) {
+  .stats-row {
+    grid-template-columns: 1fr;
+  }
+
+  .form-row {
+    grid-template-columns: 1fr;
+  }
+}

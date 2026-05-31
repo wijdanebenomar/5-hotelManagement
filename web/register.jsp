@@ -182,17 +182,17 @@ body{
       <div class="field">
         <label>Nom complet</label>
         <div class="field-wrap">
-          <i class="fa-regular fa-user"></i>
-          <input type="text" name="name" placeholder="Votre nom et prénom"
-                 value="<%= request.getAttribute("nameVal") != null ? request.getAttribute("nameVal") : "" %>" required autofocus>
+          <i class="fa-regular fa-user" required></i>
+          <input type="text" name="name" placeholder="your name" maxlength="100"
+                 value="<%= request.getAttribute("nameVal") != null ? request.getAttribute("nameVal") : "" %>" required autofocus >
         </div>
       </div>
       <div class="field">
         <label>Adresse e-mail</label>
         <div class="field-wrap">
           <i class="fa-regular fa-envelope"></i>
-          <input type="email" name="email" placeholder="votre@email.com"
-                 value="<%= request.getAttribute("emailVal") != null ? request.getAttribute("emailVal") : "" %>" required>
+          <input type="email" name="email" placeholder="ex (votre@email.com)"
+                 value="<%= request.getAttribute("emailVal") != null ? request.getAttribute("emailVal") : "" %>">
         </div>
       </div>
       <div class="field">
