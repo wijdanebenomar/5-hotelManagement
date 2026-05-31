@@ -1157,7 +1157,7 @@ footer {
         <li><a href="#">📍 Rabat, Maroc</a></li>
         <li><a href="#">📞 +212 537 XX XX XX</a></li>
         <li><a href="#">✉️ contact@bluewave.ma</a></li>
-        <li><a href="#">🕒 Ouvert 24h/24 - 7j/7</a></li>
+        <li><a href="#">🕒 Réception ouverte 24h/24</a></li>
         <li><a href="#">🗺️ Voir sur Google Maps</a></li>
         <li><a href="my-reservations">Mes réservations</a></li>
         <li><a href="#">Aide &amp; FAQ</a></li>
