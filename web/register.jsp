@@ -207,7 +207,7 @@ body{
         <label>Mot de passe</label>
         <div class="field-wrap">
           <i class="fa-solid fa-lock"></i>
-          <input type="password" name="password" id="pwd" placeholder="Minimum 6 caractères" required oninput="checkStrength(this.value)">
+          <input type="password" name="password"  minlength="6" id="pwd" placeholder="Minimum 6 caractères" required oninput="checkStrength(this.value)">
         </div>
         <div class="pwd-strength">
           <div class="pwd-bar" id="b1"></div>
